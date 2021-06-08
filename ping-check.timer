@@ -1,0 +1,9 @@
+[Unit]
+Description=Systemd timer to run ping checks every 5 minutes
+
+[Timer]
+OnCalendar=*-*-* *:00/5:00
+Unit=ping-check.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,5 @@
+[Unit]
+Description=Check Hosts via Ping
+
+[Service]
+ExecStart=/usr/local/bin/ping-check

@@ -1,0 +1,68 @@
+#!/bin/bash
+
+# Email Address to Send Notifications To
+EMAIL=
+
+# Check Access to Outside Internet
+CHECK_WAN=
+# URL to Check
+WAN_URL=
+# IP Address to Check
+WAN_IP=
+
+# Check Access to Hosts on Local Network
+CHECK_LOCAL=
+# Hosts to Check
+LOCAL_HOSTS=
+# IP Addresses to Check
+LOCAL_IPS=
+
+# Function to Check Access to Outside Internet
+check_wan() {
+	# Check the WAN URL
+	ping -c 1 $WAN_URL
+	# Email on Error
+	if [ $? -ne 0 ]; then 
+		echo $WAN_URL is inaccessible | mail -s "A host is inaccessible" $EMAIL
+	fi
+
+	# Check the WAN IP
+	ping -c 1 $WAN_IP
+	# Email on Error
+	if [ $? -ne 0 ]; then 
+		echo $WAN_IP is inaccessible | mail -s "An IP is inaccessible" $EMAIL
+	fi
+}
+
+# Function to Check Access to Hosts on Local Network
+check_lan() {
+	# Check the Local Hosts
+	for HOST in ${LOCAL_HOSTS[@]}; do
+		# Check the Current Host
+		ping -c 1 $HOST
+		# Email on Error
+		if [ $? -ne 0 ]; then
+			echo $HOST is inaccessible | mail -s "A host is inaccessible" $EMAIL
+		fi
+	done
+	
+	# Check the Local Hosts
+	for IP in ${LOCAL_IPS[@]}; do
+		# Check the Current Host
+		ping -c 1 $IP
+		# Email on Error
+		if [ $? -ne 0 ]; then
+			echo $IP is inaccessible | mail -s "An IP is inaccessible" $EMAIL
+		fi
+	done
+}
+
+# Check Access to Outside Internet When Enabled
+if [ $CHECK_WAN -eq 1 ]; then
+	check_wan
+fi
+
+# Check Access to Hosts on Local Network When Enabled
+if [ $CHECK_LOCAL -eq 1 ]; then
+	check_lan
+fi
